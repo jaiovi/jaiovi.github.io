@@ -16,10 +16,10 @@
 	--gray-999_40: hsla(var(--gray-999-basis), 0.4);
 	--gray-999: #ffffff;
 
-	--accent-light: #c561f6;
-	--accent-regular: #7611a6;
-	--accent-dark: #1c0056;
-	--accent-overlay: hsla(280, 89%, 67%, 0.33);
+	--accent-light: #f4a460;
+	--accent-regular: #d97706;
+	--accent-dark: #b45309;
+	--accent-overlay: hsla(38, 92%, 50%, 0.33);
 	--accent-subtle-overlay: var(--accent-overlay);
 	--accent-text-over: var(--gray-999);
 
@@ -92,22 +92,22 @@
 	--gray-999-basis: 225, 31%, 5%;
 	--gray-999: #090b11;
 
-	--accent-light: #1c0056;
-	--accent-regular: #7611a6;
-	--accent-dark: #c561f6;
-	--accent-overlay: hsla(280, 89%, 67%, 0.33);
-	--accent-subtle-overlay: hsla(281, 81%, 36%, 0.33);
+	--accent-light: #f4a460;
+	--accent-regular: #d97706;
+	--accent-dark: #b45309;
+	--accent-overlay: hsla(38, 92%, 50%, 0.33);
+	--accent-subtle-overlay: var(--accent-overlay);
 	--accent-text-over: var(--gray-0);
 
-	--link-color: var(--accent-dark);
+	--link-color: var(--accent-regular);
 
-	--gradient-stop-1: #4c11c6;
+	--gradient-stop-1: var(--accent-light);
 	--gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
 	--gradient-accent-orange: linear-gradient(
 		150deg,
 		#ca7879,
 		var(--accent-regular),
-		var(--accent-light)
+		var(--accent-dark)
 	);
 	--gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
 
@@ -210,6 +210,62 @@ h5 {
 }
 
 .gap-2 {
+	gap: 0.25rem;
+}
+.gap-4 {
+	gap: .5rem;
+}
+.gap-8 {
+	gap: 1rem;
+}
+.gap-10 {
+	gap: 1.25rem;
+}
+.gap-15 {
+	gap: 1.875rem;
+}
+.gap-20 {
+	gap: 2.5rem;
+}
+.gap-30 {
+	gap: 3,75rem;
+}
+.gap-48 {
+	gap: 6rem;
+}
+
+@media (min-width: 50em) {
+	.lg\:gap-2 {
+		gap: 0.3rem;
+	}
+	.lg\:gap-4 {
+		gap: .5rem;
+	}
+	.lg\:gap-8 {
+		gap: 1rem;
+	}
+	.lg\:gap-10 {
+		gap: 1.5rem;
+	}
+	.lg\:gap-15 {
+		gap: 2rem;
+	}
+	.lg\:gap-20 {
+		gap: 2.5rem;
+	}
+	.lg\:gap-30 {
+		gap: 5rem;
+	}
+	.lg\:gap-48 {
+		gap: 9rem;
+	}
+}
+
+
+/* Custom scrollbar styles */
+/*
+
+.gap-2 {
 	gap: 0.5rem;
 }
 .gap-4 {
@@ -260,3 +316,6 @@ h5 {
 		gap: 12rem;
 	}
 }
+
+
+*/
