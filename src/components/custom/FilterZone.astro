@@ -1,0 +1,138 @@
+---
+// FilterZone.astro
+import Pill from './Pill.astro';
+
+interface Props {
+    availableTags: string[];
+    availableTypes: string[];
+    activeFilters: string[];
+}
+
+const { availableTags, availableTypes, activeFilters } = Astro.props;
+---
+
+<div class="filter-container">
+    <section class="source-zone">
+        <p>Drag to filter:</p>
+        <div class="pill-group">
+            {availableTypes.map(type => (
+                <div class="draggable-pill" draggable="true" data-type="type" data-value={type}>
+                    <Pill>📦 {type}</Pill>
+                </div>
+            ))}
+            {availableTags.map(tag => (
+                <div class="draggable-pill" draggable="true" data-type="tag" data-value={tag}>
+                    <Pill>{tag}</Pill>
+                </div>
+            ))}
+        </div>
+    </section>
+
+    <section id="drop-zone" class="drop-zone">
+        {activeFilters.length === 0 ? (
+            <p class="placeholder">Drop tags or types here...</p>
+        ) : (
+            <div class="active-filters">
+                {activeFilters.map(filter => (
+                    <button class="remove-filter" data-value={filter}>
+                        <Pill>✕ {filter}</Pill>
+                    </button>
+                ))}
+            </div>
+        )}
+    </section>
+</div>
+
+<style>
+    .filter-container { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+    .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .draggable-pill { cursor: grab; }
+    .draggable-pill:active { cursor: grabbing; }
+    
+    .drop-zone {
+        min-height: 4rem;
+        border: 2px dashed var(--gray-800);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        transition: background-color 0.2s ease;
+        background: var(--gray-999_40);
+    }
+
+    .drop-zone.drag-over {
+        background-color: var(--accent-subtle-overlay);
+        border-color: var(--accent-regular);
+    }
+
+    .active-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .remove-filter { background: none; border: none; cursor: pointer; padding: 0; }
+    .placeholder { color: var(--gray-400); pointer-events: none; }
+</style>
+
+<script>
+    import { navigate } from 'astro:transitions/client';
+
+    function initFilter() {
+        const draggables = document.querySelectorAll('.draggable-pill');
+        const dropZone = document.getElementById('drop-zone');
+        const removeButtons = document.querySelectorAll('.remove-filter');
+
+        // Drag Start
+        draggables.forEach(el => {
+            el.addEventListener('dragstart', (e: any) => {
+                e.dataTransfer.setData('text/plain', el.getAttribute('data-value'));
+            });
+        });
+
+        // Drop Zone Logic
+        dropZone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone?.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone?.addEventListener('drop', (e: any) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const newValue = e.dataTransfer.getData('text/plain');
+            updateFilters(newValue, 'add');
+        });
+
+        // Click to remove logic
+        removeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const val = btn.getAttribute('data-value');
+                updateFilters(val!, 'remove');
+            });
+        });
+    }
+
+    function updateFilters(value: string, action: 'add' | 'remove') {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        let filters = params.get('f')?.split(',').filter(Boolean) || [];
+
+        if (action === 'add' && !filters.includes(value)) {
+            filters.push(value);
+        } else if (action === 'remove') {
+            filters = filters.filter(f => f !== value);
+        }
+
+        if (filters.length > 0) {
+            params.set('f', filters.join(','));
+        } else {
+            params.delete('f');
+        }
+
+        // Navigate using Astro's ClientRouter to trigger the view transition
+        navigate(`${url.pathname}?${params.toString()}`);
+    }
+
+    // Runs on initial load and after every View Transition navigation
+    document.addEventListener('astro:page-load', initFilter);
+</script>

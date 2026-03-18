@@ -10,6 +10,7 @@ tags:
   - 3D Designer
 ---
 
+## Concept
 Gemify design concept initially was conceived as carboard box for curious minds. In those tests visibility of the gem was an issue, so we pivoted towards tabletop.
 
 Thematic wise, the first idea was a casino theme, tabletop mixer, where you could position your dice with elements and pulling the lever, will bring the resulting gem.
