@@ -1,16 +1,20 @@
 ---
-title: Gemify (2025)
+title: Atole Champurrado (TBA)
 publishDate: 2025-03-02 00:00:00
 img: /assets/projects/2025-gemify/cover_2025-gemify.webp
-img_alt: Screenshot of Gemify
+img_alt: Screenshot
 description: |
-  visionOS game, gem creation using simplified elements on top of a futuristic board.
-type: APP
+  2D Feature film in development phase
+type: FILM
 tags:
-  - 3D Designer
+  - Director
+  - Writer
+  - Producer
+software:
+  - Procreate
+  - D
 ---
 
-## Concept
 Gemify design concept initially was conceived as carboard box for curious minds. In those tests visibility of the gem was an issue, so we pivoted towards tabletop.
 
 Thematic wise, the first idea was a casino theme, tabletop mixer, where you could position your dice with elements and pulling the lever, will bring the resulting gem.

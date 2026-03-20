@@ -8,6 +8,9 @@ description: |
 type: APP
 tags:
   - 3D Designer
+software:
+  - Blender
+  - Xcode
 ---
 
 Gemify design concept initially was conceived as carboard box for curious minds. In those tests visibility of the gem was an issue, so we pivoted towards tabletop.
