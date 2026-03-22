@@ -33,14 +33,14 @@ const { Content } = await render(entry);
 		<div class="stack gap-15">
 			<header>
 				<div class="wrapper stack gap-2">
-					<a class="back-link" href="/"><Icon icon="arrow-left" /> Work</a>
+					<a class="back-link" id="back-to"><Icon icon="arrow-left" /> Work</a>
 					<Hero title={entry.data.title} type={entry.data.type} align="start">
 						<div class="details">
 							<div class="tags">
 								{entry.data.tags.map((t) => 
-								<div href={`/?f=${t}`}>
+								<a href={`/?f=${t}`}>
 									<Pill>{t}</Pill>
-								</div>
+								</a>
 								)}
 							</div>
 							<p class="description">{entry.data.description}</p>
@@ -180,3 +180,20 @@ const { Content } = await render(entry);
 		background-color: var(--accent-dark);
 	}
 </style>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        const backLink = document.getElementById('back-to');
+        
+        if (backLink) {
+            backLink.addEventListener('click', (e) => {
+                // If there is a history to go back to, use it!
+                // This preserves your filters (?f=...&m=...) automatically.
+                if (window.history.length > 1) {
+                    e.preventDefault();
+                    window.history.back();
+                }
+            });
+        }
+    });
+</script>
