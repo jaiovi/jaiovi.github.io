@@ -85,7 +85,9 @@ const activeFilters = [];
 	}
 
     // Listen for the custom event from our FilterZone
-    window.addEventListener('filter-updated', syncProjectVisibility);
-    window.addEventListener('popstate', syncProjectVisibility);
-    syncProjectVisibility();
+    document.addEventListener('astro:page-load', () => {
+        syncProjectVisibility();
+        window.addEventListener('filter-updated', syncProjectVisibility);
+        window.addEventListener('popstate', syncProjectVisibility);
+    });
 </script>

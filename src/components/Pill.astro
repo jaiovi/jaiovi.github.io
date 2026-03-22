@@ -4,8 +4,9 @@ interface Props {
 }
 
 const { variant = 'tag' } = Astro.props;
+//<div class:list={['pill', variant]}>
 ---
 
-<div class:list={['pill', variant]}>
+<div class={`pill ${variant}`} data-variant={variant}>
 	<slot />
 </div>

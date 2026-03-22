@@ -83,133 +83,130 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
 </style>
 
 <script>
-    // 1. SELECTORS
-    const dropZone = document.getElementById('drop-zone');
-    const filtersList = document.getElementById('active-filters-list');
-    const placeholder = document.getElementById('drop-placeholder');
-    const modeButtons = document.querySelectorAll('.mode-btn');
+    // Define the main initialization function
+    function initFilterZone() {
+        const dropZone = document.getElementById('drop-zone');
+        const filtersList = document.getElementById('active-filters-list');
+        const placeholder = document.getElementById('drop-placeholder');
+        const modeButtons = document.querySelectorAll('.mode-btn');
 
-    /**
-     * Helper to get/set category colors. 
-     * Since the URL only stores the name (e.g., 'Astro'), we use 
-     * localStorage to remember that 'Astro' is a 'software' (purple).
-     */
-    function getCategoryMap() {
-        return JSON.parse(localStorage.getItem('filter-categories') || '{}');
-    }
+        // If we aren't on a page with a filter zone, stop here
+        if (!dropZone || !filtersList) return;
 
-    function saveCategory(value, category) {
-        const map = getCategoryMap();
-        map[value] = category;
-        localStorage.setItem('filter-categories', JSON.stringify(map));
-    }
+        // --- 1. PERSISTENCE HELPERS ---
+        // Remembers if a pill was 'software', 'tag', or 'type' to keep colors
+        function getCategoryMap() {
+            return JSON.parse(localStorage.getItem('filter-categories') || '{}');
+        }
 
-    // 2. CORE UI RENDERER
-    function renderActivePills() {
-        const params = new URLSearchParams(window.location.search);
-        const activeFilters = params.get('f')?.split(',').filter(Boolean) || [];
-        const mode = params.get('m') || 'or';
-        const categoryMap = getCategoryMap();
+        function saveCategory(value, category) {
+            const map = getCategoryMap();
+            map[value] = category;
+            localStorage.setItem('filter-categories', JSON.stringify(map));
+        }
 
-        // Sync Mode Toggle Buttons
-        modeButtons.forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+        // --- 2. UI RENDERER ---
+        function renderActivePills() {
+            const params = new URLSearchParams(window.location.search);
+            const activeFilters = params.get('f')?.split(',').filter(Boolean) || [];
+            const mode = params.get('m') || 'or';
+            const categoryMap = getCategoryMap();
+
+            // Sync Mode Buttons (AND/OR)
+            modeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+            });
+
+            // Clean the list
+            filtersList.innerHTML = '';
+            placeholder.style.display = activeFilters.length === 0 ? 'block' : 'none';
+
+            activeFilters.forEach(filterValue => {
+                const category = categoryMap[filterValue] || 'tag';
+                
+                // We use a div to avoid the "white box" browser button bug
+                const item = document.createElement('div');
+                item.className = 'remove-filter-item'; 
+                console.log("Rendering pill for", filterValue, "with category", category);
+                item.innerHTML = `<div class="pill ${category}">✕ ${filterValue}</div>`;
+                
+                item.style.cursor = 'pointer';
+                item.onclick = () => updateFilters(filterValue, category, 'remove');
+                
+                filtersList.appendChild(item);
+            });
+
+            // Notify the Main Page to refresh the project grid
+            window.dispatchEvent(new Event('filter-updated'));
+        }
+
+        // --- 3. STATE MANAGEMENT ---
+        function updateFilters(value, category, action) {
+            const url = new URL(window.location.href);
+            const params = url.searchParams;
+            let filters = params.get('f')?.split(',').filter(Boolean) || [];
+
+            if (action === 'add') {
+                if (!filters.includes(value)) {
+                    filters.push(value);
+                    saveCategory(value, category);
+                }
+            } else {
+                filters = filters.filter(f => f !== value);
+            }
+
+            if (filters.length > 0) params.set('f', filters.join(','));
+            else params.delete('f');
+
+            // Update URL without refreshing
+            window.history.pushState({}, '', url);
+            renderActivePills();
+        }
+
+        // --- 4. EVENT LISTENERS ---
+        
+        // Drag Logic
+        document.querySelectorAll('.draggable-pill').forEach(el => {
+            el.addEventListener('dragstart', (e) => {
+                const val = el.getAttribute('data-value');
+                // Reads the variant from the Pill component
+                const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
+                e.dataTransfer.setData('application/json', JSON.stringify({ value: val, category: variant }));
+            });
         });
 
-        // Clear and Rebuild the Drop Zone
-        filtersList.innerHTML = '';
-        
-        if (activeFilters.length === 0) {
-            placeholder.style.display = 'block';
-        } else {
-            placeholder.style.display = 'none';
-            activeFilters.forEach(filterValue => {
-                const category = categoryMap[filterValue] || 'tag'; // Default fallback
-                
-                const btn = document.createElement('button');
-                btn.className = 'remove-filter';
-                // We inject the original category class to keep the color!
-                btn.innerHTML = `<div class="pill ${category}">✕ ${filterValue}</div>`;
-                
-                btn.onclick = () => updateFilters(filterValue, category, 'remove');
-                filtersList.appendChild(btn);
-            });
-        }
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
 
-        // IMPORTANT: Tell the Project Grid to update
-        window.dispatchEvent(new Event('filter-updated'));
-    }
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
 
-    // 3. STATE MANAGEMENT
-    function updateFilters(value, category, action) {
-        const url = new URL(window.location.href);
-        const params = url.searchParams;
-        let filters = params.get('f')?.split(',').filter(Boolean) || [];
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            try {
+                const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                if (data.value) updateFilters(data.value, data.category, 'add');
+            } catch (err) { console.error("Drop error", err); }
+        });
 
-        if (action === 'add') {
-            if (!filters.includes(value)) {
-                filters.push(value);
-                saveCategory(value, category);
-            }
-        } else {
-            filters = filters.filter(f => f !== value);
-        }
+        // Mode Toggle (AND/OR)
+        modeButtons.forEach(btn => {
+            btn.onclick = () => {
+                const mode = btn.getAttribute('data-mode');
+                const url = new URL(window.location.href);
+                url.searchParams.set('m', mode);
+                window.history.pushState({}, '', url);
+                renderActivePills();
+            };
+        });
 
-        if (filters.length > 0) params.set('f', filters.join(','));
-        else params.delete('f');
-
-        // Update URL bar without reload
-        window.history.pushState({}, '', url);
+        // Initial render for the current page state
         renderActivePills();
     }
 
-    // 4. EVENT LISTENERS
-    
-    // Drag Start: Package the value and the color (category)
-    document.querySelectorAll('.draggable-pill').forEach(el => {
-        el.addEventListener('dragstart', (e) => {
-            const val = el.getAttribute('data-value');
-            // We find the internal Pill variant to know the color
-            const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
-            
-            const data = JSON.stringify({ value: val, category: variant });
-            e.dataTransfer.setData('application/json', data);
-        });
-    });
-
-    // Drop Zone Interaction
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
-
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        
-        try {
-            const data = JSON.parse(e.dataTransfer.getData('application/json'));
-            if (data.value) updateFilters(data.value, data.category, 'add');
-        } catch (err) {
-            console.error("Invalid drop data");
-        }
-    });
-
-    // Mode Toggle (AND / OR)
-    modeButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const mode = btn.getAttribute('data-mode');
-            const url = new URL(window.location.href);
-            url.searchParams.set('m', mode);
-            window.history.pushState({}, '', url);
-            renderActivePills();
-        });
-    });
-
-    // 5. INITIALIZE
-    // Runs when the script loads or when user hits "Back" in browser
-    window.addEventListener('popstate', renderActivePills);
-    renderActivePills();
+    // --- 5. LIFECYCLE INITIALIZATION ---
+    // This ensures the code runs on first load AND every time you go "Back"
+    document.addEventListener('astro:page-load', initFilterZone);
 </script>
