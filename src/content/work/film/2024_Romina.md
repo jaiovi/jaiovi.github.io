@@ -1,7 +1,7 @@
 ---
 title: Romina (2024)
 publishDate: 2025-09-8 00:00:00
-img: ../../../assets/work_imgs/2024/2024_cover_Romina.jpeg
+img: ../../../assets/work_imgs/2024/2024_cover_romina.jpeg
 img_alt: Screenshot
 description: 2D Short film pilot and comic, sucessfully pitched to Cartoon Network in 2022.
 type: FILM
