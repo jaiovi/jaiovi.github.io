@@ -13,7 +13,13 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
 
 <div class="filter-container">
     <section class="source-zone">
-        <p class="label">Drag to filter:</p>
+        <div class="filter-header">
+            <p class="label">Drag to filter:</p>
+            <div class="mode-toggle">
+                <button id="mode-or" class="mode-btn active" data-mode="or">OR</button>
+                <button id="mode-and" class="mode-btn" data-mode="and">AND</button>
+            </div>
+        </div>
         <div class="pill-group">
             {availableTypes.map(type => (
                 <div class="draggable-pill" draggable="true" data-value={type}>
@@ -64,65 +70,114 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
     }
 
     .active-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .remove-filter { background: none; border: none; cursor: pointer; padding: 0; }
     .placeholder { color: var(--gray-500); font-style: italic; }
+
+    /* ADDITIONAL TOGGLE*/
+    .filter-header { display: flex; justify-content: space-between; align-items: center; }
+    .mode-toggle { display: flex; background: var(--gray-900); border-radius: 0.5rem; padding: 0.2rem; }
+    .mode-btn { 
+        padding: 0.2rem 0.8rem; border: none; background: none; color: var(--gray-400); 
+        cursor: pointer; font-size: 0.8rem; border-radius: 0.3rem; 
+    }
+    .mode-btn.active { background: var(--accent-regular); color: white; }
 </style>
 
 <script>
+    // 1. SELECTORS
     const dropZone = document.getElementById('drop-zone');
     const filtersList = document.getElementById('active-filters-list');
     const placeholder = document.getElementById('drop-placeholder');
+    const modeButtons = document.querySelectorAll('.mode-btn');
 
+    /**
+     * Helper to get/set category colors. 
+     * Since the URL only stores the name (e.g., 'Astro'), we use 
+     * localStorage to remember that 'Astro' is a 'software' (purple).
+     */
+    function getCategoryMap() {
+        return JSON.parse(localStorage.getItem('filter-categories') || '{}');
+    }
+
+    function saveCategory(value, category) {
+        const map = getCategoryMap();
+        map[value] = category;
+        localStorage.setItem('filter-categories', JSON.stringify(map));
+    }
+
+    // 2. CORE UI RENDERER
     function renderActivePills() {
         const params = new URLSearchParams(window.location.search);
-        const filters = params.get('f')?.split(',').filter(Boolean) || [];
-        
-        // Clear current list
+        const activeFilters = params.get('f')?.split(',').filter(Boolean) || [];
+        const mode = params.get('m') || 'or';
+        const categoryMap = getCategoryMap();
+
+        // Sync Mode Toggle Buttons
+        modeButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+        });
+
+        // Clear and Rebuild the Drop Zone
         filtersList.innerHTML = '';
         
-        if (filters.length === 0) {
+        if (activeFilters.length === 0) {
             placeholder.style.display = 'block';
         } else {
             placeholder.style.display = 'none';
-            filters.forEach(f => {
+            activeFilters.forEach(filterValue => {
+                const category = categoryMap[filterValue] || 'tag'; // Default fallback
+                
                 const btn = document.createElement('button');
                 btn.className = 'remove-filter';
-                btn.innerHTML = `<div class="pill active">✕ ${f}</div>`; // Adjust class to match your Pill CSS
-                btn.onclick = () => updateFilters(f, 'remove');
+                // We inject the original category class to keep the color!
+                btn.innerHTML = `<div class="pill ${category}">✕ ${filterValue}</div>`;
+                
+                btn.onclick = () => updateFilters(filterValue, category, 'remove');
                 filtersList.appendChild(btn);
             });
         }
-        
-        // Tell the main page to update the projects
+
+        // IMPORTANT: Tell the Project Grid to update
         window.dispatchEvent(new Event('filter-updated'));
     }
 
-    function updateFilters(value, action) {
+    // 3. STATE MANAGEMENT
+    function updateFilters(value, category, action) {
         const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
+        const params = url.searchParams;
         let filters = params.get('f')?.split(',').filter(Boolean) || [];
 
-        if (action === 'add' && !filters.includes(value)) {
-            filters.push(value);
-        } else if (action === 'remove') {
+        if (action === 'add') {
+            if (!filters.includes(value)) {
+                filters.push(value);
+                saveCategory(value, category);
+            }
+        } else {
             filters = filters.filter(f => f !== value);
         }
 
         if (filters.length > 0) params.set('f', filters.join(','));
         else params.delete('f');
 
-        // Update URL without refresh
-        window.history.pushState({}, '', `${url.pathname}?${params.toString()}`);
+        // Update URL bar without reload
+        window.history.pushState({}, '', url);
         renderActivePills();
     }
 
-    // Drag and Drop Listeners
+    // 4. EVENT LISTENERS
+    
+    // Drag Start: Package the value and the color (category)
     document.querySelectorAll('.draggable-pill').forEach(el => {
         el.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', el.getAttribute('data-value'));
+            const val = el.getAttribute('data-value');
+            // We find the internal Pill variant to know the color
+            const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
+            
+            const data = JSON.stringify({ value: val, category: variant });
+            e.dataTransfer.setData('application/json', data);
         });
     });
 
+    // Drop Zone Interaction
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('drag-over');
@@ -133,10 +188,28 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.classList.remove('drag-over');
-        const val = e.dataTransfer.getData('text/plain');
-        if (val) updateFilters(val, 'add');
+        
+        try {
+            const data = JSON.parse(e.dataTransfer.getData('application/json'));
+            if (data.value) updateFilters(data.value, data.category, 'add');
+        } catch (err) {
+            console.error("Invalid drop data");
+        }
     });
 
-    // Initial render on page load
+    // Mode Toggle (AND / OR)
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.getAttribute('data-mode');
+            const url = new URL(window.location.href);
+            url.searchParams.set('m', mode);
+            window.history.pushState({}, '', url);
+            renderActivePills();
+        });
+    });
+
+    // 5. INITIALIZE
+    // Runs when the script loads or when user hits "Back" in browser
+    window.addEventListener('popstate', renderActivePills);
     renderActivePills();
 </script>

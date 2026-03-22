@@ -76,6 +76,39 @@
 
 	/* Transitions */
 	--theme-transition: 0.2s ease-in-out;
+
+	/* Pill global */
+	.pill {
+		display: flex;
+		padding: 0.25rem 1rem;
+		gap: 0.25rem;
+		color: var(--accent-text-over);
+		border-radius: 999rem;
+		font-size: var(--text-xs);
+		line-height: 1.35;
+		white-space: nowrap;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+	.pill:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+        transition: transform 0.1s ease;
+    }
+
+	/* Pill olor Variants */
+	.type { background-color: #7611a6; } /* Purple-ish */
+	.tag { background-color: var(--accent-regular); } /* Neutral */
+	.software { background-color: #2e7d32; } /* Green-ish */
+	.active { 
+		background-color: var(--accent-light); 
+		border: 1px solid var(--accent-light);
+	}
+
+	@media (min-width: 50em) {
+		.pill { font-size: var(--text-sm); }
+	}
+	.remove-filter { background: transparent; border: none; cursor: pointer; padding: 0; margin:none; display: contents;}
+    
 }
 
 :root.theme-dark {
