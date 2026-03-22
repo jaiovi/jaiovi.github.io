@@ -34,17 +34,8 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
     </section>
 
     <div id="drop-zone" class="drop-zone">
-        {activeFilters.length === 0 ? (
-            <span class="placeholder">Drop here to filter projects</span>
-        ) : (
-            <div class="active-filters">
-                {activeFilters.map(filter => (
-                    <button class="remove-filter" data-value={filter}>
-                        <Pill variant="active">✕ {filter}</Pill>
-                    </button>
-                ))}
-            </div>
-        )}
+        <div id="active-filters-list" class="active-filters"></div>
+        <span id="drop-placeholder" class="placeholder">Drop here to filter projects</span>
     </div>
 </div>
 
@@ -78,43 +69,35 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
 </style>
 
 <script>
-    import { navigate } from 'astro:transitions/client';
+    const dropZone = document.getElementById('drop-zone');
+    const filtersList = document.getElementById('active-filters-list');
+    const placeholder = document.getElementById('drop-placeholder');
 
-    function initFilter() {
-        const draggables = document.querySelectorAll('.draggable-pill');
-        const dropZone = document.getElementById('drop-zone');
-        const removeButtons = document.querySelectorAll('.remove-filter');
-
-        draggables.forEach(el => {
-            el.addEventListener('dragstart', (e: any) => {
-                e.dataTransfer.setData('text/plain', el.getAttribute('data-value'));
+    function renderActivePills() {
+        const params = new URLSearchParams(window.location.search);
+        const filters = params.get('f')?.split(',').filter(Boolean) || [];
+        
+        // Clear current list
+        filtersList.innerHTML = '';
+        
+        if (filters.length === 0) {
+            placeholder.style.display = 'block';
+        } else {
+            placeholder.style.display = 'none';
+            filters.forEach(f => {
+                const btn = document.createElement('button');
+                btn.className = 'remove-filter';
+                btn.innerHTML = `<div class="pill active">✕ ${f}</div>`; // Adjust class to match your Pill CSS
+                btn.onclick = () => updateFilters(f, 'remove');
+                filtersList.appendChild(btn);
             });
-        });
-
-        dropZone?.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('drag-over');
-        });
-
-        dropZone?.addEventListener('dragleave', () => {
-            dropZone.classList.remove('drag-over');
-        });
-
-        dropZone?.addEventListener('drop', (e: any) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            const val = e.dataTransfer.getData('text/plain');
-            if (val) updateFilters(val, 'add');
-        });
-
-        removeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                updateFilters(btn.getAttribute('data-value')!, 'remove');
-            });
-        });
+        }
+        
+        // Tell the main page to update the projects
+        window.dispatchEvent(new Event('filter-updated'));
     }
 
-    function updateFilters(value: string, action: 'add' | 'remove') {
+    function updateFilters(value, action) {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
         let filters = params.get('f')?.split(',').filter(Boolean) || [];
@@ -128,9 +111,32 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
         if (filters.length > 0) params.set('f', filters.join(','));
         else params.delete('f');
 
-        //navigate(`${url.pathname}?${params.toString()}`);
-        navigate(`${url.pathname}?${params.toString()}`);
+        // Update URL without refresh
+        window.history.pushState({}, '', `${url.pathname}?${params.toString()}`);
+        renderActivePills();
     }
 
-    document.addEventListener('astro:page-load', initFilter);
+    // Drag and Drop Listeners
+    document.querySelectorAll('.draggable-pill').forEach(el => {
+        el.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', el.getAttribute('data-value'));
+        });
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const val = e.dataTransfer.getData('text/plain');
+        if (val) updateFilters(val, 'add');
+    });
+
+    // Initial render on page load
+    renderActivePills();
 </script>
