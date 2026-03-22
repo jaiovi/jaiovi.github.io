@@ -12,6 +12,56 @@ const { variant } = Astro.props;
 
 <style>
 	.grid {
+        display: grid;
+        /* Mobile: 2 columns by default */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        list-style: none;
+        padding: 0;
+    }
+
+    /* Small variant specifically for mobile */
+    .grid.small {
+        gap: 0.5rem;
+    }
+
+	@media (min-width: 50em) {
+		.grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1rem;
+		}
+
+		.grid.offset {
+			--row-offset: 0rem; 
+            padding-bottom: 0;
+		}
+
+		/* Shift first item in each row vertically to create staggered effect. */
+		.grid.offset > :global(:nth-child(odd)) {
+			transform: none;
+		}
+
+		/* If last row contains only one item, display it in the second column. */
+		.grid.offset > :global(:last-child:nth-child(odd)) {
+			grid-column: auto;
+		}
+
+		.grid.small {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 2rem;
+		}
+
+		.grid.small > :global(*) {
+			flex-basis: 20rem;
+		}
+	}
+</style>
+
+<!--
+<style>
+	.grid {
 		display: grid;
 		grid-auto-rows: 1fr;
 		gap: 1rem;
@@ -63,3 +113,4 @@ const { variant } = Astro.props;
 		}
 	}
 </style>
+-->

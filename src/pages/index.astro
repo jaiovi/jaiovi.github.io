@@ -5,27 +5,33 @@ import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-
 import FilterZone from '../components/custom/FilterZone.astro';
 
 const projects = (await getCollection('work')).sort(
 	(a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
 );
 
-// 1. Get unique tags and types for the "Source" zone
-const allTags = [...new Set(projects.flatMap(p => p.data.tags))];
+// Unique lists for the FilterZone
+const allSoftware = [...new Set(projects.flatMap(p => p.data.software || []))];
+const allTags = [...new Set(projects.flatMap(p => p.data.tags || []))];
 const allTypes = [...new Set(projects.map(p => p.data.type))];
 
-// 2. Read filters from URL (e.g., ?f=React,Film)
-const url = new URL(Astro.request.url);
-const activeFilters = url.searchParams.get('f')?.split(',') || [];
+// Get filters from the URL
+// .filter(Boolean) is CRITICAL: it prevents empty strings from breaking the logic
+const activeFilters = Astro.url.searchParams.get('f')?.split(',').filter(Boolean) || [];
 
-// 3. Filter projects
+// DEBUG: Check your terminal! If this prints [], the URL param isn't being read.
+console.log('URL:', Astro.url.href);
+console.log('searchParams:', Astro.url.searchParams.toString());
+console.log('Active Filters:', activeFilters);
+
 const filteredProjects = activeFilters.length > 0 
-    ? projects.filter(p => 
-        activeFilters.includes(p.data.type) || 
-        p.data.tags.some(t => activeFilters.includes(t))
-      )
+    ? projects.filter(p => {
+        const hasType = activeFilters.includes(p.data.type);
+        const hasTag = p.data.tags?.some(t => activeFilters.includes(t));
+        const hasSoftware = p.data.software?.some(s => activeFilters.includes(s));
+        return hasType || hasTag || hasSoftware;
+      })
     : projects;
 ---
 
@@ -37,13 +43,24 @@ const filteredProjects = activeFilters.length > 0
 		<main class="wrapper stack gap-8">
 			<Hero
 				title="Creative with tech"
-				tagline="See my best films, apps and conferences"
+				tagline="Explore my best films, apps and conferences"
 				align="start"
 			/>
+
+			<FilterZone 
+				availableSoftware={allSoftware} 
+				availableTags={allTags} 
+				availableTypes={allTypes} 
+				activeFilters={activeFilters} 
+			/>
+
 			<Grid variant="offset">
 				{
-					projects.map((project) => (
-						<li>
+					/* TRIPLE CHECK: This MUST be filteredProjects. 
+                       If it says 'projects', the UI will never change.
+                    */
+					filteredProjects.map((project) => (
+						<li key={project.id}>
 							<PortfolioPreview project={project} />
 						</li>
 					))

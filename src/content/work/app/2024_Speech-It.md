@@ -1,16 +1,16 @@
 ---
-title: Gemify (2025)
+title: SpeechIt (2024)
 publishDate: 2025-03-02 00:00:00
-img: ../../../assets/work_imgs/2025/2025_cover_gemify.webp
-img_alt: Screenshot of Gemify
-description: |
-  visionOS game, gem creation using simplified elements on top of a futuristic board.
+img: ../../../assets/work_imgs/2024/2024_cover_speech-it.jpg
+img_alt: Screenshot of Speech It
+description: iOS application for presentation rehearsal
 type: APP
 tags:
-  - 3D Designer
+  - Mobile
 software:
-  - Blender
   - Xcode
 ---
 
-Gemify design concept initially was conceived as carboard box for curious minds. In those tests visibility of the gem was an issue, so we pivoted towards tabletop.
+An app that assists public speakers in effectively rehearsing their speeches without the need for another person's assistance. It compares your speech to your actual speaking and provides real-time feedback.
+
+First Apple Developer Academy project.

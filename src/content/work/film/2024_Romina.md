@@ -3,9 +3,9 @@ title: Romina (2024)
 publishDate: 2025-09-8 00:00:00
 img: ../../../assets/work_imgs/2024/2024_cover_Romina.jpeg
 img_alt: Screenshot
-description: |
-  2D Short film pilot and comic, sucessfully pitched to Cartoon Network in 2022.
+description: 2D Short film pilot and comic, sucessfully pitched to Cartoon Network in 2022.
 type: FILM
+link: https://www.youtube.com/watch?v=t22fM9lmKyE&pp=ygUNcm9taW5hIHBpbG90bw%3D%3D
 tags:
   - Director
   - Writer
