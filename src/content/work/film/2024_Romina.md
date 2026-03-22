@@ -24,9 +24,8 @@ As director, my goal was to bring a handcrafted 2D visual style to life that was
 ### Editing and Post-Production
 In my role as editor, I utilized DaVinci Resolve to assemble the animation and refine the narrative pacing of the pilot. My technical background enabled me to establish an efficient workflow, ensuring transitions maintained the energy needed to hold a young audience's attention.
 
- Editing was more than just a technical step; it was the final stage of compositing, where I merged node-base in Fusion with new modules added.
+Editing was more than just a technical step; it was the final stage of compositing, where I merged node-base in Fusion with new modules added.
 
- ![Arte](https://markdown-here.com/img/icon256.png)
 
 ### Project Impact
 Award-Winning Pilot: Best Screenplay at FEINJAL 2024.

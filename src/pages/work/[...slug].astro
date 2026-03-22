@@ -47,6 +47,11 @@ const { Content } = await render(entry);
 			<main class="wrapper">
 				<div class="stack gap-10 content">
 					<Image src={entry.data.img} alt={entry.data.img_alt || ''} loading="lazy" decoding="async" width="1280" height="720" />
+					{entry.data.link && (
+						<a class="project-link" href={entry.data.link} target="_blank" rel="noopener noreferrer">
+							View project
+						</a>
+					)}
 					<div class="content">
 						<Content />
 					</div>
@@ -153,5 +158,21 @@ const { Content } = await render(entry);
 	.types {
 		font-size: var(--text-sm);
 		color: var(--gray-500);
+	}
+
+	.project-link {
+		display: inline-block;
+		padding: 0.75rem 1.5rem;
+		background-color: var(--accent-regular);
+		color: var(--accent-text-over);
+		border-radius: 1.5rem;
+		text-decoration: none;
+		font-weight: 600;
+		transition: background-color var(--theme-transition);
+	}
+
+	.project-link:hover,
+	.project-link:focus {
+		background-color: var(--accent-dark);
 	}
 </style>

@@ -16,6 +16,7 @@ export const collections = {
             // Now image() will correctly transform the string path into an object
             img: image(), 
             img_alt: z.string().optional(),
+            link: z.string().optional(),
         }),
     }),
 };

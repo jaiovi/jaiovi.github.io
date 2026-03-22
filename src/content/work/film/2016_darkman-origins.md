@@ -5,6 +5,7 @@ img: https://img.youtube.com/vi/IkbuK1ZO5Jo/maxresdefault.jpg
 img_alt: Thumbnail of YouTube video
 description: 3D Short film about my own minecraft original character. 
 type: FILM
+link: https://youtu.be/IkbuK1ZO5Jo
 tags:
  - Director
  - Writer
@@ -14,8 +15,6 @@ software:
  - Maya
  - Premiere
 ---
-
-[YouTube video](https://youtu.be/IkbuK1ZO5Jo)
 
 ### Writer’s Concept
 Darkman was my first Minecraft Original Character in 2014. Set as a double skeleton-man, was the protagonist of the short films.
