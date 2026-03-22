@@ -7,6 +7,8 @@ import Icon from '../../components/Icon.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+import { Image } from 'astro:assets';
+
 interface Props {
 	entry: CollectionEntry<'work'>;
 }
@@ -44,7 +46,7 @@ const { Content } = await render(entry);
 			</header>
 			<main class="wrapper">
 				<div class="stack gap-10 content">
-					{entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
+					<Image src={entry.data.img} alt={entry.data.img_alt || ''} loading="lazy" decoding="async" width="1280" height="720" />
 					<div class="content">
 						<Content />
 					</div>

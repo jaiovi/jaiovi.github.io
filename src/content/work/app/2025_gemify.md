@@ -1,7 +1,7 @@
 ---
 title: Gemify (2025)
 publishDate: 2025-03-02 00:00:00
-img: /assets/projects/2025-gemify/cover_2025-gemify.webp
+img: ../../../assets/work_imgs/2025/2025_cover_gemify.webp
 img_alt: Screenshot of Gemify
 description: |
   visionOS game, gem creation using simplified elements on top of a futuristic board.

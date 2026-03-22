@@ -1,7 +1,7 @@
 ---
 title: Atole Champurrado (TBA)
 publishDate: 2025-03-02 00:00:00
-img: /assets/projects/2025-gemify/cover_2025-gemify.webp
+img: ../../../assets/work_imgs/2025/tba_cover_atole-champurrado.png
 img_alt: Screenshot
 description: |
   2D Feature film in development phase

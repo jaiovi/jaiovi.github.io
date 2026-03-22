@@ -1,7 +1,7 @@
 ---
 title: A Plushie's Dream (2020)
-publishDate: 2020-03-02 00:00:00
-img: /assets/projects/2020-a-plushies-dream/cover_2020-a-plushies-dream.png
+publishDate: 2020-06-02 00:00:00
+img: ../../../assets/work_imgs/2020/2020_cover_a-plushies-dream.jpeg
 img_alt: Screenshot
 description: |
   3D short film about luck & destiny though a toy's story perspective.
