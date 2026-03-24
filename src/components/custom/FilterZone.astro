@@ -49,7 +49,11 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
     .filter-container { display: flex; flex-direction: column; gap: 1.5rem; }
     .label { font-size: var(--text-sm); color: var(--gray-400); margin-bottom: 0.5rem; }
     .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .draggable-pill { cursor: grab; }
+    .draggable-pill {
+        cursor: pointer; /* Change to pointer so it looks clickable */
+        user-select: none; /* Prevents text selection while tapping/dragging */
+        touch-action: manipulation; /* Optimizes for mobile tapping */
+    }
     
     .drop-zone {
         min-height: 4.5rem;
@@ -167,11 +171,21 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
         
         // Drag Logic
         document.querySelectorAll('.draggable-pill').forEach(el => {
-            el.addEventListener('dragstart', (e) => {
-                const val = el.getAttribute('data-value');
+            const val = el.getAttribute('data-value');
                 // Reads the variant from the Pill component
                 const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
+            el.addEventListener('dragstart', (e) => {
+                
                 e.dataTransfer.setData('application/json', JSON.stringify({ value: val, category: variant }));
+            });
+            // Mobile/Universal: Click Logic
+            el.addEventListener('click', () => {
+                // We trigger the same 'add' logic you already built
+                updateFilters(val, category, 'add');
+                
+                // Optional: Add a small visual feedback for the tap
+                el.style.transform = "scale(0.95)";
+                setTimeout(() => el.style.transform = "scale(1)", 100);
             });
         });
 
