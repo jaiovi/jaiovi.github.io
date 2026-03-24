@@ -50,9 +50,14 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
     .label { font-size: var(--text-sm); color: var(--gray-400); margin-bottom: 0.5rem; }
     .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .draggable-pill {
-        cursor: pointer; /* Change to pointer so it looks clickable */
-        user-select: none; /* Prevents text selection while tapping/dragging */
-        touch-action: manipulation; /* Optimizes for mobile tapping */
+        cursor: pointer; /* Cambiado de 'grab' a 'pointer' para invitar al click */
+        user-select: none; /* Evita que se resalte el texto en móvil */
+        transition: transform 0.1s ease;
+        touch-action: manipulation; /* Optimiza el toque en navegadores móviles */
+    }
+
+    .draggable-pill:active {
+        transform: scale(0.95); /* Efecto de "botón presionado" */
     }
     
     .drop-zone {
@@ -172,20 +177,22 @@ const { availableTags, availableTypes, availableSoftware, activeFilters } = Astr
         // Drag Logic
         document.querySelectorAll('.draggable-pill').forEach(el => {
             const val = el.getAttribute('data-value');
-                // Reads the variant from the Pill component
-                const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
-            el.addEventListener('dragstart', (e) => {
-                
-                e.dataTransfer.setData('application/json', JSON.stringify({ value: val, category: variant }));
-            });
-            // Mobile/Universal: Click Logic
+            // Obtenemos la categoría (type, software o tag)
+            const variant = el.querySelector('[data-variant]')?.getAttribute('data-variant') || 'tag';
+
+            // EVENTO DE CLICK: Para móviles y comodidad en desktop
             el.addEventListener('click', () => {
-                // We trigger the same 'add' logic you already built
-                updateFilters(val, category, 'add');
+                // Simplemente llamamos a tu función existente
+                updateFilters(val, variant, 'add');
                 
-                // Optional: Add a small visual feedback for the tap
+                // Feedback visual opcional: una pequeña pulsación
                 el.style.transform = "scale(0.95)";
                 setTimeout(() => el.style.transform = "scale(1)", 100);
+            });
+
+            // EVENTO DE DRAG: Lo mantenemos para desktop
+            el.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('application/json', JSON.stringify({ value: val, category: variant }));
             });
         });
 
