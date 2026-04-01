@@ -8,7 +8,7 @@ type: APP
 tags:
   - Mobile
 software:
-  - Xcode
+  - Swift
 ---
 
 An app that assists public speakers in effectively rehearsing their speeches without the need for another person's assistance. It compares your speech to your actual speaking and provides real-time feedback.

@@ -21,6 +21,8 @@ The project was originally conceived as Lechuguín and was selected by Cartoon N
 ### Director’s Vision
 As director, my goal was to bring a handcrafted 2D visual style to life that was as vibrant as the characters themselves. I led a team of artists at Studio Kixta to ensure every frame captured the warmth and magic of the forest. The direction focused on balancing physical comedy with moments of discovery, creating a piece that entertains while educating in a non-didactic way. This creative vision was recognized with the official selection at the DestaCADO International Animation and Digital Art Festival.
 
+Film made with 8 animator and 3 cleanup artists, using several animation programs, like Procreate and Toon Boom Harmony.
+
 ### Editing and Post-Production
 In my role as editor, I utilized DaVinci Resolve to assemble the animation and refine the narrative pacing of the pilot. My technical background enabled me to establish an efficient workflow, ensuring transitions maintained the energy needed to hold a young audience's attention.
 

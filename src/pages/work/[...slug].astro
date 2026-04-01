@@ -45,6 +45,13 @@ const { Content } = await render(entry);
 							</div>
 							<p class="description">{entry.data.description}</p>
 						</div>
+						<div class="tags">
+								{entry.data.software?.map((t) => 
+								<a href={`/?f=${t}`}>
+									<Pill variant="software">{t}</Pill>
+								</a>
+								)}
+							</div>
 					</Hero>
 				</div>
 			</header>

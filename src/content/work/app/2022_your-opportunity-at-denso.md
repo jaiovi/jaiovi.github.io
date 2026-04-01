@@ -1,9 +1,9 @@
 ---
-Title: Your Opportunity at Denso (2022)
+title: Your Opportunity at Denso (2022)
 publishDate: 2022-03-02 00:00:00
 img: ../../../assets/work_imgs/2022/2022_cover_your-opportunity-at-denso.jpeg
 img_alt: Screenshot of the app
-description: University project in collaboration with DENSO: recruitment gamification.
+description: University project in collaboration with DENSO recruitment gamification.
 type: APP
 tags:
  - Full stack
