@@ -57,7 +57,7 @@ const { Content } = await render(entry);
 			</header>
 			<main class="wrapper">
 				<div class="stack gap-10 content">
-					<Image src={entry.data.img} alt={entry.data.img_alt || ''} loading="lazy" decoding="async" width="1280" height="720" />
+					<Image src={entry.data.img} alt={entry.data.img_alt || ''} loading="eager" decoding="async" width="1280" height="720" />
 					{entry.data.link && (
 						<a class="project-link" href={entry.data.link} target="_blank" rel="noopener noreferrer">
 							View project
