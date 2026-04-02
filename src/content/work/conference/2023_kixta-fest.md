@@ -8,9 +8,6 @@ type: CONFERENCE
 link: https://youtu.be/JJOkr31EeOw
 tags:
  - Producer
-software:
 ---
 
-Managed stakeholders between 
-
-Reviewed around 600 short films for the creator.
+Managed stakeholders between Reviewed around 600 short films for the creator.
